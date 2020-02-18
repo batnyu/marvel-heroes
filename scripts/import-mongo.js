@@ -16,7 +16,7 @@ const delayBetweenImport = 500; // ms
 
 let counter = 0;
 
-async function run() {
+function run() {
 
     MongoClient.connect(
         mongoUrl,
@@ -37,9 +37,9 @@ function readCsv(sourcePath, callback){
     let heroes = [];
     fs.createReadStream(sourcePath)
         .pipe(csv({
-            separator: ";"
+            separator: ","
         }))
-        .on("data", (data) => heroes.push(data))
+        .on("data", (data) => heroes.push(parseHero(data)))
         .on("end", () => {
             callback(heroes);
         });
@@ -59,4 +59,62 @@ function insertData(csvdata, db){
     });
 }
 
-run().catch(console.error);
+function toArray(string) {
+    return (typeof string === "string") && string ? string.split(',') : [];
+}
+
+function parseHero(data){
+    return {
+        id : data["id"],
+        name : data["name"],
+        imageUrl : data["imageUrl"],
+        backgroundImageUrl : data["backgroundImageUrl"],
+        externalLink : data["externalLink"],
+        description : data["description"],
+        identity : parseIdentity(data),
+        appearance : parseAppearance(data),
+        teams : toArray(data["teams"]),
+        powers : toArray(data["powers"]),
+        partners : toArray(data["partners"]),
+        skills : parseSkills(data),
+        creators : toArray(data["creators"])
+    }
+}
+
+function parseIdentity(data){
+    return {
+        secretIdentities : toArray(data["secretIdentities"]),
+        birthPlace : data["birthPlace"],
+        occupation : data["occupation"],
+        aliases : toArray(data["aliases"]),
+        alignment : data["alignment"],
+        firstAppearance : data["firstAppearance"],
+        yearAppearance : data["yearAppearance"],
+        universe : data["universe"]
+    }
+}
+
+function parseAppearance(data){
+    return {
+        gender : data["gender"],
+        type : data["type"],
+        race : data["race"],
+        height : data["height"],
+        weight : data["weight"],
+        eyeColor : data["eyeColor"],
+        hairColor : data["hairColor"]
+    }
+}
+
+function parseSkills(data){
+    return {
+        intelligence : data["intelligence"],
+        strength : data["strength"],
+        speed : data["speed"],
+        durability : data["durability"],
+        combat : data["combat"],
+        power : data["power"]
+    }
+}
+
+run();
