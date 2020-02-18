@@ -7,5 +7,7 @@ target/
 /.settings
 /RUNNING_PID
 scripts/node_modules/
+scripts/package-lock.json
 scripts/.env
 logs
+package-lock.json
