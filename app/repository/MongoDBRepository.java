@@ -39,7 +39,11 @@ public class MongoDBRepository {
     }
 
     public CompletionStage<List<YearAndUniverseStat>> countByYearAndUniverse() {
-        List<Document> pipeline = Arrays.asList();
+        List<Document> pipeline = Arrays.asList(
+                Document.parse("{ $match : { \"identity.yearAppearance\" : { $ne : \"\" } } }"),
+                Document.parse("{ $group: { _id: { yearAppearance : \"$identity.yearAppearance\", universe : \"$identity.universe\"}, count: { $sum: 1 } } }"),
+                Document.parse("{ $group : { _id : { yearAppearance : \"$_id.yearAppearance\" }, byUniverse : { $push:{ universe: \"$_id.universe\", count: \"$count\"} } } }")
+        );
         return ReactiveStreamsUtils.fromMultiPublisher(heroesCollection.aggregate(pipeline))
                 .thenApply(documents ->
                         documents.stream()
