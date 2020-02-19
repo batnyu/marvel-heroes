@@ -60,17 +60,17 @@ function createBulkInsertQuery(heroes) {
         aliases = split(aliases);
         partners = split(partners);
 
-        let name_suggest = [];
-        name_suggest.push(formatInputWeight(rest.name, 10));
-        secretIdentities.forEach(s => name_suggest.push(formatInputWeight(s, 5)));
-        aliases.forEach(a => name_suggest.push(formatInputWeight(a, 5)));
+        let suggest = [];
+        suggest.push(formatInputWeight(rest.name, 10));
+        secretIdentities.forEach(s => suggest.push(formatInputWeight(s, 5)));
+        aliases.forEach(a => suggest.push(formatInputWeight(a, 5)));
 
         const heroFormatted = {
             ...rest,
             secretIdentities,
             aliases,
             partners,
-            name_suggest
+            suggest
         };
 
         acc.push({index: {_index: indexName, _type: '_doc', _id: hero.id}});
