@@ -1,7 +1,7 @@
 var mongodb = require("mongodb");
 var csv = require("csv-parser");
 var fs = require("fs");
-const {bufferCount, concatMap, delay, flatMap, concat, tap, startWith} = require('rxjs/operators');
+const {bufferCount, concatMap, delay, flatMap, concat, tap, finalize} = require('rxjs/operators');
 const {from, of, Observable} = require('rxjs');
 
 var MongoClient = mongodb.MongoClient;
@@ -32,12 +32,10 @@ async function deleteExistingAndInsertFromCsv(sourcePath, db, client) {
     const source = deleteMany(db).pipe(
         flatMap(() => readCsv(sourcePath)),
         flatMap(heroes => insertData(heroes, db)),
-        concat(of([]).pipe(
-            tap(() => {
-                console.log("FINISHED");
-                client.close();
-            })
-        ))
+        finalize(() => {
+            console.log("FINISHED");
+            client.close();
+        })
     );
 
     source.subscribe();
