@@ -60,7 +60,15 @@ function insertData(csvdata, db){
 }
 
 function toArray(string) {
-    return (typeof string === "string") && string ? string.split(',') : [];
+    return string && (typeof string === "string") ? string.split(',') : [];
+}
+
+function toNumber(string) {
+    return string && (typeof string === "string") ? parseInt(string) : null;
+}
+
+function toFloat(string) {
+    return string && (typeof string === "string") ? parseFloat(string) : null;
 }
 
 function parseHero(data){
@@ -89,7 +97,7 @@ function parseIdentity(data){
         aliases : toArray(data["aliases"]),
         alignment : data["alignment"],
         firstAppearance : data["firstAppearance"],
-        yearAppearance : data["yearAppearance"],
+        yearAppearance : toNumber(data["yearAppearance"]),
         universe : data["universe"]
     }
 }
@@ -99,8 +107,8 @@ function parseAppearance(data){
         gender : data["gender"],
         type : data["type"],
         race : data["race"],
-        height : data["height"],
-        weight : data["weight"],
+        height : toFloat(data["height"]),
+        weight : toFloat(data["weight"]),
         eyeColor : data["eyeColor"],
         hairColor : data["hairColor"]
     }
@@ -108,12 +116,12 @@ function parseAppearance(data){
 
 function parseSkills(data){
     return {
-        intelligence : data["intelligence"],
-        strength : data["strength"],
-        speed : data["speed"],
-        durability : data["durability"],
-        combat : data["combat"],
-        power : data["power"]
+        intelligence : toNumber(data["intelligence"]),
+        strength : toNumber(data["strength"]),
+        speed : toNumber(data["speed"]),
+        durability : toNumber(data["durability"]),
+        combat : toNumber(data["combat"]),
+        power : toNumber(data["power"])
     }
 }
 
