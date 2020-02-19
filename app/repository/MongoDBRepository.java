@@ -40,9 +40,10 @@ public class MongoDBRepository {
 
     public CompletionStage<List<YearAndUniverseStat>> countByYearAndUniverse() {
         List<Document> pipeline = Arrays.asList(
-                Document.parse("{ $match : { \"identity.yearAppearance\" : { $ne : \"\" } } }"),
+                Document.parse("{ $match : { \"identity.yearAppearance\" : { $ne : null } } }"),
                 Document.parse("{ $group: { _id: { yearAppearance : \"$identity.yearAppearance\", universe : \"$identity.universe\"}, count: { $sum: 1 } } }"),
-                Document.parse("{ $group : { _id : { yearAppearance : \"$_id.yearAppearance\" }, byUniverse : { $push:{ universe: \"$_id.universe\", count: \"$count\"} } } }")
+                Document.parse("{ $group : { _id : { yearAppearance : \"$_id.yearAppearance\" }, byUniverse : { $push:{ universe: \"$_id.universe\", count: \"$count\"} } } }"),
+                Document.parse("{ $sort: { \"_id.yearAppearance\" : 1 } }")
         );
         return ReactiveStreamsUtils.fromMultiPublisher(heroesCollection.aggregate(pipeline))
                 .thenApply(documents ->
