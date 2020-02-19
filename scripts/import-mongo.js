@@ -21,9 +21,16 @@ function run() {
     MongoClient.connect(
         mongoUrl,
         { useNewUrlParser: true, useUnifiedTopology: true },
-        (err, client) => {
+        async (err, client) =>  {
+
             if (err) throw err;
             let db = client.db(dbName).collection(collectionName);
+
+            db.deleteMany({}, function(err, numberOfRemovedDocs) {
+                if(err) throw err;
+                console.log("Dropped " + numberOfRemovedDocs + " documents")
+            });
+
             insertFromCsv(sourcePath, db);
         }
     );
