@@ -10,11 +10,11 @@ async function run() {
     // Create Elasticsearch client
     const client = new Client({node: 'http://localhost:9200'});
     
-    const res = await client.indices.exists({index: indexName});
-    if (res) {
+    const {body} = await client.indices.exists({index: indexName});
+    if (body) {
         await client.indices.delete({index: indexName});
     }
-    /*
+    
     await client.indices.create( {index: indexName });  
     await client.indices.putMapping({
         index : indexName,
@@ -62,7 +62,7 @@ async function run() {
                 });
             });
   
-        });*/
+        });
 }
 
 // Fonction utilitaire permettant de formatter les données pour l'insertion "bulk" dans elastic
