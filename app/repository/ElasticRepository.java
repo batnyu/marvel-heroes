@@ -32,8 +32,6 @@ public class ElasticRepository {
 
 
     public CompletionStage<PaginatedResults<SearchedHero>> searchHeroes(String input, int size, int page) {
-//        return CompletableFuture.completedFuture(new PaginatedResults<>(3, 1, 1, Arrays.asList(SearchedHeroSamples.IronMan(), SearchedHeroSamples.MsMarvel(), SearchedHeroSamples.SpiderMan())));
-        // TODO
         int from = ((page - 1) * size);
         return wsClient.url(elasticConfiguration.uri + "/heroes/_search")
                 .post(Json.parse("{" +
@@ -66,20 +64,18 @@ public class ElasticRepository {
     }
 
     public CompletionStage<List<SearchedHero>> suggest(String input) {
-        // TODO
         return wsClient.url(elasticConfiguration.uri + "/heroes/_search")
                 .post(Json.parse("{" +
                         "    \"suggest\": {\n" +
                         "        \"heroes-suggest\" : {\n" +
                         "            \"prefix\" : \"" + input + "\", \n" +
                         "            \"completion\" : { \n" +
-                        "                \"field\" : \"name_suggest\" \n" +
+                        "                \"field\" : \"suggest\" \n" +
                         "            }\n" +
                         "        }\n" +
                         "    }" +
                         "}"))
                 .thenApply(response -> {
-                    System.out.println(response.asJson());
                     List<SearchedHero> searchedHeroes = new ArrayList<>();
                     Iterator<JsonNode> it = response.asJson().get("suggest").get("heroes-suggest").get(0).get("options").iterator();
                     while (it.hasNext()) {
