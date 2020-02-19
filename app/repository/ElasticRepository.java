@@ -79,7 +79,6 @@ public class ElasticRepository {
                         "    }" +
                         "}"))
                 .thenApply(response -> {
-                    System.out.println(response.asJson());
                     List<SearchedHero> searchedHeroes = new ArrayList<>();
                     Iterator<JsonNode> it = response.asJson().get("suggest").get("heroes-suggest").get(0).get("options").iterator();
                     while (it.hasNext()) {
