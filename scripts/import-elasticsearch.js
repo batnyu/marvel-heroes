@@ -9,11 +9,23 @@ const indexName = 'heroes';
 async function run() {
     // Create Elasticsearch client
     const client = new Client({node: 'http://localhost:9200'});
-
-    // Création de l'indice
-    client.indices.create({index: indexName}, (err, resp) => {
-        if (err) console.trace(err.message);
-    });
+    
+    const res = await client.indices.exists({index: indexName});
+    if (res) {
+        await client.indices.delete({index: indexName});
+    }
+    /*
+    await client.indices.create( {index: indexName });  
+    await client.indices.putMapping({
+        index : indexName,
+        body: {
+            properties: {
+                suggest : {
+                    type : "completion"
+                }
+            }
+        }
+    });  
 
     let heroes = [];
     let counter = 0;
@@ -36,6 +48,7 @@ async function run() {
             });
         })
         .on('end', () => {
+
             from(heroes).pipe(
                 bufferCount(200),
                 concatMap(data => of(data).pipe(delay(1000)))
@@ -48,7 +61,8 @@ async function run() {
                     // client.close();
                 });
             });
-        });
+  
+        });*/
 }
 
 // Fonction utilitaire permettant de formatter les données pour l'insertion "bulk" dans elastic
